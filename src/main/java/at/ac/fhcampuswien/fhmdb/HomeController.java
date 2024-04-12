@@ -31,7 +31,7 @@ public class HomeController implements Initializable {
     public JFXListView movieListView;
 
     @FXML
-    public JFXComboBox genreComboBox;
+    public JFXComboBox genreComboBox, releaseYearComboBox, ratingComboBox;
 
     @FXML
     public JFXButton sortBtn;
@@ -63,6 +63,13 @@ public class HomeController implements Initializable {
         genreComboBox.getItems().add("No filter");  // add "no filter" to the combobox
         genreComboBox.getItems().addAll(genres);    // add all genres to the combobox
         genreComboBox.setPromptText("Filter by Genre");
+
+        releaseYearComboBox.getItems().add("All");
+        releaseYearComboBox.setPromptText("Filter by release year");
+
+        ratingComboBox.getItems().add("All");
+        ratingComboBox.setPromptText("Rating from..:");
+
     }
 
     public void sortMovies(){
