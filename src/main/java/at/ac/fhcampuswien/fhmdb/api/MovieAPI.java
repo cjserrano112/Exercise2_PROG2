@@ -25,7 +25,7 @@ public class MovieAPI {
         appendQueryParam(url, "query", query);
         appendQueryParam(url, "genre", genre != null ? genre.toString() : null);
         appendQueryParam(url, "releaseYear", releaseYear);
-        appendQueryParam(url, "rating", rating);
+        appendQueryParam(url, "ratingFrom", rating);
         System.out.println("Request: " + url.toString());
         return url.toString();
     }
