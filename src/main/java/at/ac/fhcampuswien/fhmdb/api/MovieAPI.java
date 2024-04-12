@@ -6,18 +6,19 @@ import java.util.List;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.models.MovieDeserializer;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import com.google.gson.Gson;
+import com.google.gson.*;
 
 
 public class MovieAPI {
-
-
     private static final String URL = "https://prog2.fh-campuswien.ac.at/movies";
+
     private static final OkHttpClient CLIENT = new OkHttpClient();
-    private static final Gson GSON = new Gson();
+
+    private static final Gson GSON = new GsonBuilder().registerTypeAdapter(Movie.class, new MovieDeserializer()).create();
 
     private static String modifyURL(String query, Genre genre, String releaseYear, String ratingFrom) {
         StringBuilder url = new StringBuilder(URL);
@@ -39,18 +40,20 @@ public class MovieAPI {
         }
     }
 
-
     public static List<Movie> callMovies(String query, Genre genre, String releaseYear, String ratingFrom) {
         Request request = new Request.Builder()
                 .url(modifyURL(query, genre, releaseYear, ratingFrom))
                 .addHeader("User-Agent", "http.agent")
                 .build();
         try (Response response = CLIENT.newCall(request).execute()) {
-            return Arrays.asList(GSON.fromJson(response.body().string(), Movie[].class));
+            Movie[] movies = GSON.fromJson(response.body().string(), Movie[].class);
+            return Arrays.asList(movies);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
         return List.of();
     }
-
+    public static List<Movie> getMovies() {
+        return callMovies(null, null, null, null);
+    }
 }
