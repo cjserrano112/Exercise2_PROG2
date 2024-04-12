@@ -20,12 +20,13 @@ public class MovieAPI {
 
     private static final Gson GSON = new GsonBuilder().registerTypeAdapter(Movie.class, new MovieDeserializer()).create();
 
-    private static String modifyURL(String query, Genre genre, String releaseYear, String ratingFrom) {
+    private static String modifyURL(String query, Genre genre, String releaseYear, String rating) {
         StringBuilder url = new StringBuilder(URL);
         appendQueryParam(url, "query", query);
         appendQueryParam(url, "genre", genre != null ? genre.toString() : null);
         appendQueryParam(url, "releaseYear", releaseYear);
-        appendQueryParam(url, "ratingFrom", ratingFrom);
+        appendQueryParam(url, "rating", rating);
+        System.out.println("Request: " + url.toString());
         return url.toString();
     }
 
@@ -40,9 +41,9 @@ public class MovieAPI {
         }
     }
 
-    public static List<Movie> callMovies(String query, Genre genre, String releaseYear, String ratingFrom) {
+    public static List<Movie> callMovies(String query, Genre genre, String releaseYear, String rating) {
         Request request = new Request.Builder()
-                .url(modifyURL(query, genre, releaseYear, ratingFrom))
+                .url(modifyURL(query, genre, releaseYear, rating))
                 .addHeader("User-Agent", "http.agent")
                 .build();
         try (Response response = CLIENT.newCall(request).execute()) {

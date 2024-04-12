@@ -23,13 +23,8 @@ public class MovieDeserializer implements JsonDeserializer<Movie> {
 
         int lengthInMinutes = jsonObject.get("lengthInMinutes").getAsInt();
 
-        double ratingFrom;
-        if (jsonObject.has("ratingFrom") && !jsonObject.get("ratingFrom").isJsonNull()) {
-            ratingFrom = jsonObject.get("ratingFrom").getAsDouble();
-        } else {
-            ratingFrom = 0.0;
-        }
+        double rating = jsonObject.get("rating").getAsDouble();
 
-        return new Movie(id, title, description, genres, releaseYear, imgUrl, lengthInMinutes, ratingFrom);
+        return new Movie(id, title, description, genres, releaseYear, imgUrl, lengthInMinutes, null, null, null, rating);
     }
 }

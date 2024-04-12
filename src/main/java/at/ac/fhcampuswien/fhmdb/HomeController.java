@@ -65,18 +65,27 @@ public class HomeController implements Initializable {
         genreComboBox.getItems().addAll(genres);    // add all genres to the combobox
         genreComboBox.setPromptText("Filter by Genre");
 
-        releaseYearComboBox.getItems().add("All");
+        releaseYearComboBox.getItems().add("No filter");
         releaseYearComboBox.setPromptText("Filter by release year");
+        Integer[] releaseYears = new Integer[99];
+        for (int i = 0; i < 99; i++) {
+            releaseYears[i] = 2024 - i;
+        }
+        releaseYearComboBox.getItems().addAll(releaseYears);
 
-        ratingComboBox.getItems().add("All");
-        ratingComboBox.setPromptText("Rating from..:");
+        ratingComboBox.getItems().add("No filter");
+        ratingComboBox.setPromptText("Rating from...:");
+        Double[] rating = new Double[]{1.00, 2.00, 3.00, 4.00, 5.00, 6.00, 7.00, 8.00, 9.00, 10.00};
+        ratingComboBox.getItems().addAll(rating);
     }
 
     public void sortMovies(){
         if (sortedState == SortedState.NONE || sortedState == SortedState.DESCENDING) {
             sortMovies(SortedState.ASCENDING);
+            sortBtn.setText("Sort (DESC)");
         } else if (sortedState == SortedState.ASCENDING) {
             sortMovies(SortedState.DESCENDING);
+            sortBtn.setText("Sort (ASCE)");
         }
     }
     // sort movies based on sortedState
@@ -121,17 +130,17 @@ public class HomeController implements Initializable {
                 .toList();
     }
 
-    public void applyAllFilters(String searchQuery, Object genre) {
-        List<Movie> filteredMovies = allMovies;
-
-        if (!searchQuery.isEmpty()) {
-            filteredMovies = filterByQuery(filteredMovies, searchQuery);
+    public void applyAllFilters(String searchQuery, Object genre, String releaseYear, String rating) {
+        List<Movie> filteredMovies;
+        if (searchQuery.isEmpty() && genre == "No filter" && releaseYear == "Filter by release Year" && rating == "Rating from...:") {
+            filteredMovies = MovieAPI.getMovies();
+        } else {
+            if (searchQuery.isEmpty()) searchQuery = null;
+            if (genre != null && genre.equals("No filter")) genre = null;
+            if (releaseYear.equals("Filter by release Year") || releaseYear.equals("No filter") || releaseYear.isEmpty()) releaseYear = null;
+            if (rating.equals("Rating from...:") || rating.equals("No filter") || rating.isEmpty()) rating = null;
+            filteredMovies = MovieAPI.callMovies(searchQuery, (Genre) genre, releaseYear, rating);
         }
-
-        if (genre != null && !genre.toString().equals("No filter")) {
-            filteredMovies = filterByGenre(filteredMovies, Genre.valueOf(genre.toString()));
-        }
-
         observableMovies.clear();
         observableMovies.addAll(filteredMovies);
     }
@@ -139,8 +148,12 @@ public class HomeController implements Initializable {
     public void searchBtnClicked(ActionEvent actionEvent) {
         String searchQuery = searchField.getText().trim().toLowerCase();
         Object genre = genreComboBox.getSelectionModel().getSelectedItem();
+        String releaseYear = "";
+        String rating = "";
+        if (releaseYearComboBox.getSelectionModel().getSelectedItem() != null) releaseYear = releaseYearComboBox.getSelectionModel().getSelectedItem().toString();
+        if (ratingComboBox.getSelectionModel().getSelectedItem() != null) rating = ratingComboBox.getSelectionModel().getSelectedItem().toString();
 
-        applyAllFilters(searchQuery, genre);
+        applyAllFilters(searchQuery, genre, releaseYear, rating);
         sortMovies(sortedState);
     }
 
