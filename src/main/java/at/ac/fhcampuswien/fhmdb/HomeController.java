@@ -20,6 +20,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -38,6 +40,7 @@ public class HomeController implements Initializable {
     public JFXButton sortBtn;
 
     public List<Movie> allMovies;
+    public JFXButton resetBtn;
 
     protected ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
@@ -160,4 +163,46 @@ public class HomeController implements Initializable {
     public void sortBtnClicked(ActionEvent actionEvent) {
         sortMovies();
     }
+
+    public void resetBtnClicked(ActionEvent actionEvent) {
+        searchField.clear();
+        ratingComboBox.getSelectionModel().clearSelection();
+        releaseYearComboBox.getSelectionModel().clearSelection();
+        genreComboBox.setPromptText("Filter by Genre");
+
+    }
+
+
+    public String getMostPopularActor(List<Movie> movies) {
+        Map<String, Long> actorCounts = movies.stream()
+                .flatMap(movie -> movie.getMainCast().stream())
+                .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()));
+
+        return actorCounts.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+    }
+
+    public int getLongestMovieTitle(List<Movie> movies) {
+        return movies.stream()
+                .map(Movie::getTitle)
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
+    }
+
+    public long countMoviesFrom(List<Movie> movies, String director) {
+        return movies.stream()
+                .filter(movie -> movie.getDirectors().contains(director))
+                .count();
+    }
+
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int min, int max) {
+        return movies.stream()
+                .filter(movie -> movie.getReleaseYear() >= min && movie.getReleaseYear() <= max)
+                .collect(Collectors.toList());
+    }
+
+
 }
