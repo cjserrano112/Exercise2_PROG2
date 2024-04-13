@@ -168,8 +168,8 @@ public class HomeController implements Initializable {
         searchField.clear();
         ratingComboBox.getSelectionModel().clearSelection();
         releaseYearComboBox.getSelectionModel().clearSelection();
-        genreComboBox.setPromptText("Filter by Genre");
-
+        genreComboBox.getSelectionModel().clearSelection();
+        searchBtnClicked(actionEvent);
     }
 
 
