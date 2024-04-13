@@ -1,8 +1,10 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +27,9 @@ public class MovieDeserializer implements JsonDeserializer<Movie> {
 
         double rating = jsonObject.get("rating").getAsDouble();
 
-        return new Movie(id, title, description, genres, releaseYear, imgUrl, lengthInMinutes, null, null, null, rating);
+        List<String> mainCast = Arrays.asList(context.deserialize(jsonObject.getAsJsonArray("mainCast"), String[].class));
+        List<String> directors = Arrays.asList(context.deserialize(jsonObject.getAsJsonArray("directors"), String[].class));
+
+        return new Movie(id, title, description, genres, releaseYear, imgUrl, lengthInMinutes, directors, null, mainCast, rating);
     }
 }

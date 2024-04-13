@@ -25,9 +25,9 @@ public class Movie {
     private final int releaseYear;
     private final String imgUrl;
     private final int lengthInMinutes;
-    private final List<String> directors = new ArrayList<>();
+    private final List<String> directors;
     private final List<String> writers = new ArrayList<>();
-    private final List<String> mainCast = new ArrayList<>();
+    private final List<String> mainCast;
     private final double rating;
 
     public Movie(String id, String title, String description, List<Genre> genres, int releaseYear, String imgUrl, int lengthInMinutes,
@@ -40,6 +40,8 @@ public class Movie {
         this.imgUrl = imgUrl;
         this.lengthInMinutes = lengthInMinutes;
         this.rating = rating;
+        this.mainCast = mainCast;
+        this.directors = directors;
     }
 
     @Override
