@@ -1,14 +1,12 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.api.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.SortedState;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class HomeControllerTest {
@@ -24,105 +22,146 @@ class HomeControllerTest {
         assertEquals(homeController.allMovies, homeController.observableMovies);
     }
 
-    @Test
-    void query_filter_with_null_movie_list_throws_exception(){
-        // given
-        homeController.initializeState();
-        String query = "IfE";
+//    @Test
+//    void at_initialization_layout_should_be_set() {
+//        homeController.initializeLayout();
+//        assertEquals(homeController.observableMovies, homeController.movieListView.getItems());
+//        assertEquals("Filter by Genre", homeController.genreComboBox.getPromptText());
+//        assertEquals("Filter by release year", homeController.releaseYearComboBox.getPromptText());
+//        assertEquals("Rating from...:", homeController.ratingComboBox.getPromptText());
+//    }
 
-        // when and then
-        assertThrows(IllegalArgumentException.class, () -> homeController.filterByQuery(null, query));
+    @Test
+    void apply_filter_with_no_values() {
+        homeController.initializeState();
+        homeController.applyAllFilters("", "Filter by Genre", "Filter by release Year", "Rating from...:");
+        assertEquals(homeController.allMovies, homeController.observableMovies);
     }
 
     @Test
-    void query_filter_with_null_value_returns_unfiltered_list() {
-        // given
+    void apply_filter_with_values1() {
         homeController.initializeState();
-        String query = null;
-
-        // when
-        List<Movie> actual = homeController.filterByQuery(homeController.observableMovies, query);
-
-        // then
-        assertEquals(homeController.observableMovies, actual);
+        homeController.applyAllFilters("puss", Genre.ADVENTURE, "", "");
+        assertEquals("Puss in Boots", homeController.observableMovies.get(0).getTitle());
     }
 
     @Test
-    void genre_filter_with_null_value_returns_unfiltered_list() {
-        // given
+    void apply_filter_with_values2() {
         homeController.initializeState();
-        Genre genre = null;
-
-        // when
-        List<Movie> actual = homeController.filterByGenre(homeController.observableMovies, genre);
-
-        // then
-        assertEquals(homeController.observableMovies, actual);
+        homeController.applyAllFilters("va", "No filter", "2009", "");
+        assertEquals("Avatar", homeController.observableMovies.get(0).getTitle());
     }
 
     @Test
-    void genre_filter_returns_all_movies_containing_given_genre() {
-        // given
+    void apply_filter_with_values3() {
         homeController.initializeState();
-        Genre genre = Genre.DRAMA;
-
-        // when
-        List<Movie> actual = homeController.filterByGenre(homeController.observableMovies, genre);
-
-        // then
-        assertEquals(22, actual.size());
+        homeController.applyAllFilters("", null, "", "9.0");
+        assertEquals(3, homeController.observableMovies.size());
     }
 
-//Leonardo DiCaprio
+    @Test
+    void sort_list_ascending_check_if_sorted_correctly() {
+        homeController.initializeState();
+        homeController.sortBtnClicked();
+        assertEquals("12 Angry Men", homeController.observableMovies.get(0).getTitle());
+    }
+
+    @Test
+    void sort_list_descending_check_if_sorted_correctly() {
+        homeController.initializeState();
+        homeController.sortedState = SortedState.ASCENDING;
+        homeController.sortBtnClicked();
+        assertEquals("Toy Story", homeController.observableMovies.get(0).getTitle());
+    }
 
     @Test
     void check_if_method_returns_most_popular_actor() {
-        // given
         homeController.initializeState();
-
-        // when
-        String actor_test = homeController.getMostPopularActor(homeController.allMovies);
-
-        // then
-        assertEquals("Leonardo DiCaprio", actor_test);
+        String actualActor = homeController.getMostPopularActor(homeController.allMovies);
+        assertEquals("Leonardo DiCaprio", actualActor);
     }
 
 
     @Test
     void check_if_method_returns_longest_movie_title_char_count() {
-        // given
         homeController.initializeState();
-
-        // when
         int movieLength = homeController.getLongestMovieTitle(homeController.allMovies);
-
-        // then
         assertEquals(46, movieLength);
     }
 
     @Test
     void check_how_many_movies_a_director_has_created() {
-        // given
         homeController.initializeState();
-
-        // when
         long movieCount = homeController.countMoviesFrom(homeController.allMovies, "Francis Ford Coppola");
-
-        // then
         assertEquals(1, movieCount);
     }
 
     @Test
     void check_how_many_movies_were_published_between_years_2000_and_2005() {
-        // given
         homeController.initializeState();
-
-        // when
         int movieCount = homeController.getMoviesBetweenYears(homeController.allMovies, 2000,2005).size();
-
-        // then
         assertEquals(4, movieCount);
     }
 
+    @Test
+    void equals_should_return_false_when_parameter_is_null() {
+        Movie movie = new Movie("1", "Test", "Leer", List.of(Genre.DRAMA), 2000, "url", 100, null, null, null, 5.5);
+        Movie movieNull = null;
+        assertFalse(movie.equals(movieNull));
+    }
 
+    @Test
+    void equals_should_return_false_when_parameter_is_not_a_movie() {
+        Movie movie = new Movie("1", "Test", "Leer", List.of(Genre.DRAMA), 2000, "url", 100, null, null, null, 5.5);
+        String comparison = "test";
+        assertFalse(movie.equals(comparison));
+    }
+
+    @Test
+    void get_id_should_return_id() {
+        Movie movie = new Movie("1", "Test", "Leer", List.of(Genre.DRAMA), 2000, "url", 100, null, null, null, 5.5);
+        assertEquals("1", movie.getId());
+    }
+
+    @Test
+    void get_description_should_return_description() {
+        Movie movie = new Movie("1", "Test", "Leer", List.of(Genre.DRAMA), 2000, "url", 100, null, null, null, 5.5);
+        assertEquals("Leer", movie.getDescription());
+    }
+
+    @Test
+    void get_genres_should_return_genres() {
+        Movie movie = new Movie("1", "Test", "Leer", List.of(Genre.DRAMA), 2000, "url", 100, null, null, null, 5.5);
+        assertEquals(List.of(Genre.DRAMA), movie.getGenres());
+    }
+
+    @Test
+    void get_imgurl_should_return_imgurl() {
+        Movie movie = new Movie("1", "Test", "Leer", List.of(Genre.DRAMA), 2000, "url", 100, null, null, null, 5.5);
+        assertEquals("url", movie.getImgUrl());
+    }
+
+    @Test
+    void get_lengthmin_should_return_lengthmin() {
+        Movie movie = new Movie("1", "Test", "Leer", List.of(Genre.DRAMA), 2000, "url", 100, null, null, null, 5.5);
+        assertEquals(100, movie.getLengthInMinutes());
+    }
+
+    @Test
+    void get_writers_should_return_writers() {
+        Movie movie = new Movie("1", "Test", "Leer", List.of(Genre.DRAMA), 2000, "url", 100, null, List.of("Writer 1", "Writer 2"), null, 5.5);
+        assertEquals(List.of("Writer 1", "Writer 2"), movie.getWriters());
+    }
+
+    @Test
+    void get_rating_should_return_rating() {
+        Movie movie = new Movie("1", "Test", "Leer", List.of(Genre.DRAMA), 2000, "url", 100, null, null, null, 5.5);
+        assertEquals(5.5, movie.getRating());
+    }
+
+    @Test
+    void call_movies_should_catch_exceotion_and_print_message_and_return_empty_list() {
+        List<Movie> result = MovieAPI.callMovies("", Genre.ACTION, "23a", "5jk");
+        assertEquals(List.of(), result);
+    }
 }

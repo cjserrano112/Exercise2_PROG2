@@ -1,9 +1,7 @@
 package at.ac.fhcampuswien.fhmdb.api;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.MovieDeserializer;
@@ -11,7 +9,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import com.google.gson.*;
-
 
 public class MovieAPI {
     private static final String URL = "https://prog2.fh-campuswien.ac.at/movies";
@@ -49,7 +46,7 @@ public class MovieAPI {
         try (Response response = CLIENT.newCall(request).execute()) {
             Movie[] movies = GSON.fromJson(response.body().string(), Movie[].class);
             return Arrays.asList(movies);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return List.of();
