@@ -32,7 +32,9 @@ public class HomeController implements Initializable {
 
     @FXML
     public JFXComboBox genreComboBox;
+    @FXML
     public JFXComboBox releaseYearComboBox;
+    @FXML
     public JFXComboBox ratingComboBox;
 
     @FXML

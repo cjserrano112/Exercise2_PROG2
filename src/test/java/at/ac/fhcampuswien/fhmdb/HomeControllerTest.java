@@ -22,15 +22,6 @@ class HomeControllerTest {
         assertEquals(homeController.allMovies, homeController.observableMovies);
     }
 
-//    @Test
-//    void at_initialization_layout_should_be_set() {
-//        homeController.initializeLayout();
-//        assertEquals(homeController.observableMovies, homeController.movieListView.getItems());
-//        assertEquals("Filter by Genre", homeController.genreComboBox.getPromptText());
-//        assertEquals("Filter by release year", homeController.releaseYearComboBox.getPromptText());
-//        assertEquals("Rating from...:", homeController.ratingComboBox.getPromptText());
-//    }
-
     @Test
     void apply_filter_with_no_values() {
         homeController.initializeState();
@@ -160,7 +151,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void call_movies_should_catch_exceotion_and_print_message_and_return_empty_list() {
+    void call_movies_should_catch_exception_and_print_message_and_return_empty_list() {
         List<Movie> result = MovieAPI.callMovies("", Genre.ACTION, "23a", "5jk");
         assertEquals(List.of(), result);
     }
