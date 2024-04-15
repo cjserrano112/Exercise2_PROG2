@@ -6,6 +6,7 @@ import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.SortedState;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,31 +68,43 @@ class HomeControllerTest {
 
     @Test
     void check_if_method_returns_most_popular_actor() {
-        homeController.initializeState();
+        List<Movie> test = Arrays.asList((new Movie("1", "Test1", "blabla", List.of(Genre.ROMANCE), 2000, "url", 69, null, null, List.of("Leonardo DiCaprio"), 7.0)),
+                (new Movie("2", "Test2", "asdf", List.of(Genre.DRAMA), 2010, "url", 12, null, null, List.of("Ivan Ban"), 7.0)),
+                (new Movie("3", "Test3", "blabla", List.of(Genre.ADVENTURE), 1999, "url", 69, null, null, List.of("Ivan Ban"), 7.0)));
+        homeController.allMovies = test;
         String actualActor = homeController.getMostPopularActor(homeController.allMovies);
-        assertEquals("Leonardo DiCaprio", actualActor);
+        assertEquals("Ivan Ban", actualActor);
     }
 
 
     @Test
     void check_if_method_returns_longest_movie_title_char_count() {
-        homeController.initializeState();
+        List<Movie> test = Arrays.asList((new Movie("1", "Test1 longest Name", "blabla", List.of(Genre.ROMANCE), 2000, "url", 69, null, null, List.of("Leonardo DiCaprio"), 7.0)),
+                (new Movie("2", "Test2", "asdf", List.of(Genre.DRAMA), 2010, "url", 12, null, null, List.of("Ivan Ban"), 7.0)),
+                (new Movie("3", "Test3", "blabla", List.of(Genre.ADVENTURE), 1999, "url", 69, null, null, List.of("Leonardo DiCaprio"), 7.0)));
+        homeController.allMovies = test;
         int movieLength = homeController.getLongestMovieTitle(homeController.allMovies);
-        assertEquals(46, movieLength);
+        assertEquals(18, movieLength);
     }
 
     @Test
     void check_how_many_movies_a_director_has_created() {
-        homeController.initializeState();
-        long movieCount = homeController.countMoviesFrom(homeController.allMovies, "Francis Ford Coppola");
-        assertEquals(1, movieCount);
+        List<Movie> test = Arrays.asList((new Movie("1", "Test1", "blabla", List.of(Genre.ROMANCE), 2000, "url", 69, List.of("Ivan Ban"), null, List.of("Leonardo DiCaprio"), 7.0)),
+                (new Movie("2", "Test2", "asdf", List.of(Genre.DRAMA), 2010, "url", 12, List.of("Christopher Serrano"), null, List.of("Ivan Ban"), 7.0)),
+                (new Movie("3", "Test3", "blabla", List.of(Genre.ADVENTURE), 1999, "url", 69, List.of("Christopher Serrano"), null, List.of("Leonardo DiCaprio"), 7.0)));
+        homeController.allMovies = test;
+        long movieCount = homeController.countMoviesFrom(homeController.allMovies, "Christopher Serrano");
+        assertEquals(2, movieCount);
     }
 
     @Test
-    void check_how_many_movies_were_published_between_years_2000_and_2005() {
-        homeController.initializeState();
-        int movieCount = homeController.getMoviesBetweenYears(homeController.allMovies, 2000,2005).size();
-        assertEquals(4, movieCount);
+    void check_how_many_movies_were_published_between_years_2000_and_2010() {
+        List<Movie> test = Arrays.asList((new Movie("1", "Test1", "blabla", List.of(Genre.ROMANCE), 2000, "url", 69, null, null, List.of("Leonardo DiCaprio"), 7.0)),
+                (new Movie("2", "Test2", "asdf", List.of(Genre.DRAMA), 2010, "url", 12, List.of("Christopher Serrano"), null, List.of("Ivan Ban"), 7.0)),
+                (new Movie("3", "Test3", "blabla", List.of(Genre.ADVENTURE), 1999, "url", 69, null, null, List.of("Leonardo DiCaprio"), 7.0)));
+        homeController.allMovies = test;
+        int movieCount = homeController.getMoviesBetweenYears(homeController.allMovies, 2000,2010).size();
+        assertEquals(2, movieCount);
     }
 
     @Test
